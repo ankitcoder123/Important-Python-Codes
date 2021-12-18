@@ -3,8 +3,8 @@ import numpy as np
 import joblib,fuzzywuzzy
 from fuzzywuzzy import fuzz,process
 from joblib import Parallel, delayed
-print("numpy vesrion::",np.__version__)
 print("pandas vesrion::",pd.__version__)
+print("numpy vesrion::",np.__version__)
 print("fuzzywuzzy vesrion::",joblib.__version__)
 print("joblib vesrion::",fuzzywuzzy.__version__)
 
