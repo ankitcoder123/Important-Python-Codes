@@ -31,10 +31,14 @@ thresh = 80
 ca = np.array(df1[["Company A"]])
 cb = np.array(df2[["Company B"]])
 
+#Parallel Code
 def parallel_fuzzy_match(idxa,idxb):
-    return [ca[idxa][0],cb[idxb][0],metric(ca[idxa][0],cb[idxb][0])]    
-
+    return [ca[idxa][0],cb[idxb][0],metric(ca[idxa][0],cb[idxb][0])]  
 results = Parallel(n_jobs=-1,verbose=1)(delayed(parallel_fuzzy_match)(idx1, idx2) for idx1 in range(len(ca)) for idx2 in range(len(cb)) \
                    if(metric(ca[idx1][0],cb[idx2][0]) > thresh))
-                     
+
+#Sequential Code
+#from tqdm import tqdm
+#results = [(ca[idx1][0],cb[idx2][0],metric(ca[idx1][0],cb[idx2][0])) for idx1 in tqdm(range(len(ca))) for idx2 in range(len(cb)) if metric(ca[idx1][0],cb[idx2][0]) > thresh]
+
 results = pd.DataFrame(results,columns = ["Company A","Company B","Score"])
