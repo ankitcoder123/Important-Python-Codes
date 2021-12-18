@@ -1,8 +1,9 @@
-
 import pandas as pd
+import numpy as np
 import joblib,fuzzywuzzy
 from fuzzywuzzy import fuzz,process
 from joblib import Parallel, delayed
+print("numpy vesrion::",np.__version__)
 print("pandas vesrion::",pd.__version__)
 print("fuzzywuzzy vesrion::",joblib.__version__)
 print("joblib vesrion::",fuzzywuzzy.__version__)
@@ -27,12 +28,13 @@ metric = fuzz.ratio
 # Define Threshold for Metric
 thresh = 80
 
-def parallel_fuzzy_match(idxa,idxb):
-    CompanyA = df1.loc[idxa,"Company A"] 
-    CompanyB = df2.loc[idxb,"Company B"]
-    matched_score=metric(CompanyA,CompanyB)  
-    return [CompanyA,CompanyB,matched_score]    
+ca = np.array(df1[["Company A"]])
+cb = np.array(df2[["Company B"]])
 
-results = Parallel(n_jobs=-1,verbose=1)(delayed(parallel_fuzzy_match)(idx1, idx2) for idx1 in df1.index for idx2 in df2.index \
-                   if(metric(df1.loc[idx1,"Company A"] ,df2.loc[idx2,"Company B"]) > thresh))
+def parallel_fuzzy_match(idxa,idxb):
+    return [ca[idxa][0],cb[idxb][0],metric(ca[idxa][0],cb[idxb][0])]    
+
+results = Parallel(n_jobs=-1,verbose=1)(delayed(parallel_fuzzy_match)(idx1, idx2) for idx1 in range(len(ca)) for idx2 in range(len(cb)) \
+                   if(metric(ca[idx1][0],cb[idx2][0]) > thresh))
+                     
 results = pd.DataFrame(results,columns = ["Company A","Company B","Score"])
